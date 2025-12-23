@@ -302,7 +302,7 @@ class AppState: ObservableObject {
             }
         }
         
-        scheduler?.onComplete = { [weak self] result in
+        scheduler?.onComplete = { [weak self] result, isAutoBackup in
             DispatchQueue.main.async {
                 self?.isBackingUp = false
                 switch result {
@@ -316,20 +316,30 @@ class AppState: ObservableObject {
                     // Refresh stats to update backed up counts
                     self?.refreshStats()
                     
-                    // Show success alert
-                    self?.activeAlert = AlertItem(
-                        title: String(localized: "Backup Complete"),
-                        message: backupResult.summary,
-                        type: .success
-                    )
+                    // Log the result
+                    if isAutoBackup {
+                        self?.addLog(String(localized: "Auto backup completed: ") + backupResult.summary, type: .success)
+                    } else {
+                        // Show success alert only for manual backup
+                        self?.activeAlert = AlertItem(
+                            title: String(localized: "Backup Complete"),
+                            message: backupResult.summary,
+                            type: .success
+                        )
+                    }
                 case .failure(let error):
                     self?.statusMessage = "Error: \(error.localizedDescription)"
-                    // Show error alert
-                    self?.activeAlert = AlertItem(
-                        title: String(localized: "Backup Failed"),
-                        message: String(localized: "Error: ") + error.localizedDescription,
-                        type: .error
-                    )
+                    
+                    if isAutoBackup {
+                        self?.addLog(String(localized: "Auto backup failed: ") + error.localizedDescription, type: .error)
+                    } else {
+                        // Show error alert only for manual backup
+                        self?.activeAlert = AlertItem(
+                            title: String(localized: "Backup Failed"),
+                            message: String(localized: "Error: ") + error.localizedDescription,
+                            type: .error
+                        )
+                    }
                 }
             }
         }

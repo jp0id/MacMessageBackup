@@ -389,17 +389,27 @@ struct SettingsView: View {
                         let sampleDuration = 90
                         let sampleDurationFormatted = "00:01:30"
                         
-                        let smsSubjectPreview = appState.config.formatSmsSubject(contact: sampleContact, date: Date())
+                        let smsSubjectPreviewFrom = appState.config.formatSmsSubject(contact: sampleContact, date: Date(), isFromMe: false)
+                        let smsSubjectPreviewTo = appState.config.formatSmsSubject(contact: sampleContact, date: Date(), isFromMe: true)
                         let callSubjectPreview = appState.config.formatCallSubject(contact: sampleContact, type: sampleType, duration: sampleDurationFormatted, date: Date())
                         let callBodyPreview = appState.config.formatCallBody(contact: sampleContact, type: sampleType, duration: sampleDuration, durationFormatted: sampleDurationFormatted, date: Date())
                         
                         VStack(alignment: .leading, spacing: 4) {
                             HStack(alignment: .top) {
-                                Text(String(localized: "SMS Subject:"))
+                                Text("收到短信:")
                                     .font(.caption2)
                                     .foregroundStyle(.secondary)
                                     .frame(width: 70, alignment: .trailing)
-                                Text(smsSubjectPreview)
+                                Text(smsSubjectPreviewFrom)
+                                    .font(.caption2)
+                                    .foregroundStyle(.primary)
+                            }
+                            HStack(alignment: .top) {
+                                Text("发送短信:")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 70, alignment: .trailing)
+                                Text(smsSubjectPreviewTo)
                                     .font(.caption2)
                                     .foregroundStyle(.primary)
                             }

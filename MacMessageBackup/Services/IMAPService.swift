@@ -459,11 +459,22 @@ class IMAPService {
         // Clean the contact ID by removing (filtered), (smsft_rm) etc.
         let cleanedHandleId = cleanContact(message.handleId)
         
-        // Use configurable subject format
-        let subject = config.formatSmsSubject(contact: cleanedHandleId, date: message.date)
+        // Use configurable subject format with direction indicator
+        let subject = config.formatSmsSubject(contact: cleanedHandleId, date: message.date, isFromMe: message.isFromMe)
         
-        // From field: Use the cleaned phone number for threading like SMS Backup+
-        let fromField = message.isFromMe ? config.email : "\(cleanedHandleId) <\(cleanedHandleId)@sms.mac.backup>"
+        // From/To fields based on message direction
+        let fromField: String
+        let toField: String
+        
+        if message.isFromMe {
+            // Message I sent: From = me, To = contact
+            fromField = config.email
+            toField = "\(cleanedHandleId) <\(cleanedHandleId)@sms.mac.backup>"
+        } else {
+            // Message I received: From = contact, To = me
+            fromField = "\(cleanedHandleId) <\(cleanedHandleId)@sms.mac.backup>"
+            toField = config.email
+        }
         
         // Message body - use text or indicate it's an attachment/empty message
         let body: String
@@ -477,7 +488,7 @@ class IMAPService {
         
         return """
         From: \(fromField)
-        To: \(config.email)
+        To: \(toField)
         Subject: \(subject)
         Date: \(dateFormatter.string(from: message.date))
         Content-Type: text/plain; charset=UTF-8

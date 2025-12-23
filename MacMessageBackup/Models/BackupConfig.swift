@@ -18,9 +18,9 @@ enum FormatPreset: String, Codable, CaseIterable {
     
     var smsSubject: String {
         switch self {
-        case .chinese: return "{contact} - 短信"
-        case .english: return "SMS with {contact}"
-        case .smsBackupPlus: return "SMS with {contact}"
+        case .chinese: return "{direction} {contact} 短信"
+        case .english: return "SMS {direction} {contact}"
+        case .smsBackupPlus: return "SMS {direction} {contact}"
         case .compact: return "{contact}"
         }
     }
@@ -85,7 +85,7 @@ struct BackupConfig: Codable {
     var lastCalendarSyncRowId: Int64 = 0
     
     // Email format settings
-    var smsSubjectFormat: String = "{contact} - 短信"  // Default: "联系人 - 短信"
+    var smsSubjectFormat: String = "{direction} {contact} 短信"  // Default: "发给/来自 联系人 短信"
     var callSubjectFormat: String = "{contact}（{type}）"  // Default: "号码（来电）"
     var calendarTitleFormat: String = "{emoji} {type}: {contact}"  // Default: "📲 来电: 号码"
     var callBodyFormat: String = "{duration}s ({duration_formatted}) {contact}（{type}）"  // Call body format
@@ -166,15 +166,24 @@ struct BackupConfig: Codable {
     }
     
     /// Format SMS subject with placeholders replaced
-    func formatSmsSubject(contact: String, date: Date) -> String {
+    func formatSmsSubject(contact: String, date: Date, isFromMe: Bool = false) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short
         
         let cleanedContact = cleanContact(contact)
         
+        // Direction text based on isFromMe
+        let direction: String
+        if formatPreset == .chinese || (useCustomFormat && smsSubjectFormat.contains("{direction}")) {
+            direction = isFromMe ? "发给" : "来自"
+        } else {
+            direction = isFromMe ? "to" : "from"
+        }
+        
         return effectiveSmsSubjectFormat
             .replacingOccurrences(of: "{contact}", with: cleanedContact)
+            .replacingOccurrences(of: "{direction}", with: direction)
             .replacingOccurrences(of: "{date}", with: formatter.string(from: date))
     }
     

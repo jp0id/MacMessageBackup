@@ -191,7 +191,8 @@
 "Calendar Title" = "日历标题";
 "Call Body" = "通话正文";
 "Preview" = "预览";
-"SMS Subject:" = "短信标题:";
+"SMS Subject:" = "收到短信:";
+"SMS Subject To:" = "发送短信:";
 "Call Subject:" = "通话标题:";
 "Call Body:" = "通话正文:";
 
@@ -384,4 +385,8 @@
 "Test Complete" = "测试完成";
 "Test backup executed successfully. Check the operation log for details." = "测试备份执行成功。请查看操作日志了解详情。";
 "Error: " = "错误: ";
+
+/* Auto Backup */
+"Auto backup completed: " = "自动备份完成: ";
+"Auto backup failed: " = "自动备份失败: ";
 

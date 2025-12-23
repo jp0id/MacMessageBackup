@@ -16,8 +16,8 @@ class BackupScheduler {
     /// Callback for backup progress updates (percentage 0-1, message)
     var onProgress: ((Double, String) -> Void)?
     
-    /// Callback for backup completion
-    var onComplete: ((Result<BackupResult, Error>) -> Void)?
+    /// Callback for backup completion (result, isAutoBackup)
+    var onComplete: ((Result<BackupResult, Error>, Bool) -> Void)?
     
     /// Callback for incremental progress updates (messagesBackedUp, callsBackedUp)
     var onIncrementalUpdate: ((Int, Int) -> Void)?
@@ -43,7 +43,7 @@ class BackupScheduler {
         
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task {
-                await self?.performBackup()
+                await self?.performBackup(isAutoBackup: true)
             }
         }
         
@@ -64,7 +64,7 @@ class BackupScheduler {
     
     /// Perform a backup now
     @MainActor
-    func performBackup() async {
+    func performBackup(isAutoBackup: Bool = false) async {
         isCancelled = false  // Reset cancel flag
         onProgress?(0.0, String(localized: "Starting backup..."))
         
@@ -195,17 +195,17 @@ class BackupScheduler {
             // Check if backup was cancelled
             if isCancelled {
                 onProgress?(0.0, String(localized: "Backup cancelled"))
-                onComplete?(.failure(BackupError.cancelled))
+                onComplete?(.failure(BackupError.cancelled), isAutoBackup)
                 return
             }
             
             onProgress?(1.0, String(localized: "Backup complete!"))
-            onComplete?(.success(result))
+            onComplete?(.success(result), isAutoBackup)
             
         } catch {
             let failedMsg = String(localized: "Backup failed: \(error.localizedDescription)")
             onProgress?(0.0, failedMsg)
-            onComplete?(.failure(error))
+            onComplete?(.failure(error), isAutoBackup)
         }
     }
     
@@ -290,7 +290,7 @@ class BackupScheduler {
         }
         
         onProgress?(1.0, String(localized: "Test complete!"))
-        onComplete?(.success(result))
+        onComplete?(.success(result), false)
     }
 }
 

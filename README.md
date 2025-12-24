@@ -77,6 +77,12 @@
 3.  将 `MacMessageBackup.app` 从 Finder 拖入终端窗口。
 4.  按回车，输入密码并确认。
 
+### 方法 4: 解决"应用程序MacMessageBackup.app无法打开"
+1. 右击MacMessageBackup.app。
+2. 显示包内容-> MacMessageBackup.app/Contents/MacOS/MacMessageBackup
+3. chmod +x MacMessageBackup
+4. 变成黑色图标之后说明正常了。
+
 ---
 
 ### "完全磁盘访问权限" (Full Disk Access)
@@ -98,7 +104,7 @@ iMessage (`chat.db`) 和通话记录数据库属于 macOS 的核心隐私数据�
 
 1.  **请使用 "应用专用密码" (App Password)**：
     *   为了安全，**切勿**直接使用您的 Gmail 主密码。
-    *   请前往 [Google 账户设置](https://myaccount.google.com/security) -> "两步验证" -> "应用专用密码"，生成一个 16 位的独立密码供本应用使用。
+    *   请前往 [Google 应用专用密码](https://myaccount.google.com/apppasswords) ，生成一个 16 位的独立密码供本应用使用。
     *   这样不仅更安全，也避免了因两步验证导致的登录失败。
 2.  **数据备份**：
     *   虽然本应用是“只读”操作，不会删除本地数据，但进行任何批量操作前，建议您确认 Time Machine 备份正常。

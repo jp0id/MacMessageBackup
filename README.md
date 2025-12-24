@@ -78,9 +78,9 @@
 4.  按回车，输入密码并确认。
 
 ### 方法 4: 解决"应用程序MacMessageBackup.app无法打开"
-1. 右击MacMessageBackup.app。
-2. 显示包内容-> MacMessageBackup.app/Contents/MacOS/MacMessageBackup
-3. chmod +x MacMessageBackup
+1. 右击`MacMessageBackup.app`
+2. 显示包内容-> `MacMessageBackup.app/Contents/MacOS/MacMessageBackup`
+3. `chmod +x MacMessageBackup`
 4. 变成黑色图标之后说明正常了。
 
 ---
